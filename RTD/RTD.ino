@@ -1,5 +1,12 @@
-int TimeDelay = 2000;     //Time Buzzer is on in ms after RTD Initial  1000<= TimeDelay <= 3000
-float Thres = 800;        //Minimum voltage from board to initiate RTD mode 0 < Thers < 5.0
+#include <stdbool.h>
+#include <avr/io.h>
+#include <avr/interrupt.h>
+
+
+#define V_THRESHOLD 800   //Minimum voltage from board to initiate RTD mode 0 < Thers < 5.0
+
+#define TIME_DELAY 2000     //Time Buzzer is on in ms after RTD Initial  1000<= TIME_DELAY <= 3000
+
 
 int key = A0; // Key to turn
 int brakeSens = A1; // Sense the brake
@@ -63,7 +70,7 @@ void loop()
       digitalWrite(startButtonLED, LOW);
     }
      
-    if (millis() - startupTime > TimeDelay) {
+    if (millis() - startupTime > TIME_DELAY) {
       digitalWrite(buzzer, LOW);
       state = 4;
     }
@@ -75,23 +82,24 @@ void loop()
 
     delay(0);
   }
+  
   //digitalWrite(13, HIGH);
   Serial.println(state);
 }
 
-boolean keyTurned() {
-  return analogRead(key) > 500;
+bool keyTurned() {
+  return analogRead(key) > V_THRESHOLD;
 }
 
-boolean tractiveSystemOn() {
-  return analogRead(tractiveSystem) > 20;
+bool tractiveSystemOn() {
+  return analogRead(tractiveSystem) > V_THRESHOLD;
 }
 
-boolean brakeOn() {
+bool brakeOn() {
   return true;
-  //return analogRead(brakeSens) > 500;
+  //return analogRead(brakeSens) > V_THRESHOLD;
 }
 
 boolean startButtonPressed() {
-  return analogRead(startButton) > 500;
+  return analogRead(startButton) > V_THRESHOLD;
 }
